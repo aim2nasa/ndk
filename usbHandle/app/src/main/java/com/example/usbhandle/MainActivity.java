@@ -12,6 +12,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public native int helloNNDK(int v);
+    public native int open();
+    public native void close();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,5 +23,6 @@ public class MainActivity extends AppCompatActivity {
         int result = helloNNDK(5);
 
         ((TextView)findViewById(R.id.tvHello)).setText("result :"+result);
+        ((TextView)findViewById(R.id.tvHello)).setText("open :"+open());
     }
 }

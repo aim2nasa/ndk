@@ -77,6 +77,22 @@ extern "C" {
 JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_helloNNDK
   (JNIEnv *, jobject, jint);
 
+/*
+ * Class:     com_example_usbhandle_MainActivity
+ * Method:    open
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_open
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_example_usbhandle_MainActivity
+ * Method:    close
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_example_usbhandle_MainActivity_close
+  (JNIEnv *, jobject);
+
 #ifdef __cplusplus
 }
 #endif
