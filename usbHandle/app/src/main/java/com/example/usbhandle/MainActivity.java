@@ -94,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
 
     private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "onReceive");
             String action = intent.getAction();
             if (ACTION_USB_PERMISSION.equals(action)) {
                 synchronized (this) {
@@ -104,12 +103,14 @@ public class MainActivity extends AppCompatActivity {
                         if(device != null){
                             //call method to set up device communication
                             Log.d(TAG, "permission granted for device " + device);
-                            Toast.makeText(getApplicationContext(), "permission granted for device "+ device, Toast.LENGTH_SHORT).show();
-                        }
+                            Toast.makeText(getApplicationContext(), "permission granted for device ", Toast.LENGTH_SHORT).show();
+                            ((TextView)findViewById(R.id.tvHello)).setText("-open :"+open());
+                        }else
+                            Toast.makeText(getApplicationContext(), "device==null", Toast.LENGTH_LONG).show();
                     }
                     else {
                         Log.d(TAG, "permission denied for device " + device);
-                        Toast.makeText(getApplicationContext(), "permission denied for device " + device, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "permission denied for device ", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
