@@ -3,6 +3,7 @@ package com.example.usbhandle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -15,6 +16,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Button btnCon;
+    private static final String TAG = "Tag";
+
     public native int helloNNDK(int v);
     public native int open();
     public native void close();
@@ -35,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         btnCon.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                Log.v(TAG,"Connect button clicked");
                 Toast.makeText(getApplicationContext(), "Connect clicked", Toast.LENGTH_SHORT).show();
             }
         });
