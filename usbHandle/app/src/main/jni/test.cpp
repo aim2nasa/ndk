@@ -14,7 +14,7 @@ JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_helloNNDK
 JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_open
         (JNIEnv *, jobject)
 {
-    return cyusb_open();
+    return cyusb_open(0x04b4,0x00f0);
 }
 
 JNIEXPORT void JNICALL Java_com_example_usbhandle_MainActivity_close
