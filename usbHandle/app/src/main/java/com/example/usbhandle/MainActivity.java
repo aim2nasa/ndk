@@ -83,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "usbDeviceConnection = null", Toast.LENGTH_LONG).show();
                         }else{
                             Toast.makeText(getApplicationContext(), "usbDeviceConnection != null", Toast.LENGTH_LONG).show();
+
+                            usbManager.requestPermission(device,permissionIntent);
                         }
                     }
                 }
