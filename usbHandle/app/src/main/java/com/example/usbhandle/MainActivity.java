@@ -23,7 +23,7 @@ import java.util.Iterator;
 public class MainActivity extends AppCompatActivity {
 
     static {
-        System.loadLibrary("testLib");
+        System.loadLibrary("glsusb");
     }
 
     private Button btnCon;
