@@ -69,6 +69,10 @@ extern "C" {
 #define com_example_usbhandle_MainActivity_RESULT_OK -1L
 #undef com_example_usbhandle_MainActivity_MAX_NUM_PENDING_FRAGMENT_ACTIVITY_RESULTS
 #define com_example_usbhandle_MainActivity_MAX_NUM_PENDING_FRAGMENT_ACTIVITY_RESULTS 65534L
+#undef com_example_usbhandle_MainActivity_PRODUCT_ID
+#define com_example_usbhandle_MainActivity_PRODUCT_ID 240L
+#undef com_example_usbhandle_MainActivity_VENDOR_ID
+#define com_example_usbhandle_MainActivity_VENDOR_ID 1204L
 /*
  * Class:     com_example_usbhandle_MainActivity
  * Method:    helloNNDK
@@ -83,7 +87,7 @@ JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_helloNNDK
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_open
-  (JNIEnv *, jobject);
+  (JNIEnv *, jobject, jint);
 
 /*
  * Class:     com_example_usbhandle_MainActivity

@@ -30,11 +30,12 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "Tag";
     private static final String ACTION_USB_PERMISSION = "com.example.usbHandle.USB_PERMISSION";
     private UsbManager usbManager;
+    private int fileDescriptor;
     public static final int PRODUCT_ID = 0x00f0;    //FX3
     public static final int VENDOR_ID = 0x04b4;     //Cypress
 
     public native int helloNNDK(int v);
-    public native int open();
+    public native int open(int fileDescriptor);
     public native void close();
 
     @Override
@@ -48,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
         int result = helloNNDK(5);
 
         ((TextView)findViewById(R.id.tvHello)).setText("result :"+result);
-        ((TextView)findViewById(R.id.tvHello)).setText("open :"+open());
 
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         PendingIntent permissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
                         if(usbDeviceConnection==null) {
                             Toast.makeText(getApplicationContext(), "usbDeviceConnection = null", Toast.LENGTH_LONG).show();
                         }else{
+                            fileDescriptor = usbDeviceConnection.getFileDescriptor();
                             Toast.makeText(getApplicationContext(), "usbDeviceConnection != null", Toast.LENGTH_LONG).show();
 
                             usbManager.requestPermission(device,permissionIntent);
@@ -104,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                             //call method to set up device communication
                             Log.d(TAG, "permission granted for device " + device);
                             Toast.makeText(getApplicationContext(), "permission granted for device ", Toast.LENGTH_SHORT).show();
-                            ((TextView)findViewById(R.id.tvHello)).setText("-open :"+open());
+                            ((TextView)findViewById(R.id.tvHello)).setText("open :"+open(fileDescriptor));
                         }else
                             Toast.makeText(getApplicationContext(), "device==null", Toast.LENGTH_LONG).show();
                     }
