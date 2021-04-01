@@ -84,7 +84,7 @@ JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_helloNNDK
 /*
  * Class:     com_example_usbhandle_MainActivity
  * Method:    open
- * Signature: ()I
+ * Signature: (I)I
  */
 JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_open
   (JNIEnv *, jobject, jint);
@@ -96,6 +96,14 @@ JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_open
  */
 JNIEXPORT void JNICALL Java_com_example_usbhandle_MainActivity_close
   (JNIEnv *, jobject);
+
+/*
+ * Class:     com_example_usbhandle_MainActivity
+ * Method:    reader
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_reader
+        (JNIEnv *, jobject);
 
 #ifdef __cplusplus
 }

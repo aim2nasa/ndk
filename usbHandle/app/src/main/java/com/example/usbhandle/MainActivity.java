@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     public native int helloNNDK(int v);
     public native int open(int fileDescriptor);
     public native void close();
+    public native int reader();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +114,8 @@ public class MainActivity extends AppCompatActivity {
                             int r = open(fileDescriptor);
                             ((TextView)findViewById(R.id.tvHello)).setText("open="+r);
                             Toast.makeText(getApplicationContext(), "open="+r, Toast.LENGTH_LONG).show();
+
+                            Log.i(TAG, "reader = " + reader());
                         }else
                             Log.e(TAG, "device = null");
                     }
