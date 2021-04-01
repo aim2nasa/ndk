@@ -5,6 +5,8 @@
 #include "com_example_usbhandle_MainActivity.h"
 #include <jni/libusb/libusbi.h>
 
+static libusb_device_handle *devh = NULL;
+
 JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_helloNNDK
   (JNIEnv *, jobject, jint v)
   {
@@ -15,18 +17,14 @@ JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_open
         (JNIEnv *, jobject, jint fileDescriptor)
 {
     int r;
-    libusb_context ctx;
-    libusb_context *pctx = &ctx;
-    libusb_device_handle *devh;
 
-    r = libusb_set_option(&ctx, LIBUSB_OPTION_WEAK_AUTHORITY, NULL);
+    r = libusb_set_option(NULL, LIBUSB_OPTION_WEAK_AUTHORITY, NULL);
     if(r<0) return r;
 
-    r = libusb_init(&pctx);
+    r = libusb_init(NULL);
     if(r<0) return r;
 
-    r = libusb_wrap_sys_device(NULL,(intptr_t)fileDescriptor,&devh);
-    return r;
+    return libusb_wrap_sys_device(NULL,(intptr_t)fileDescriptor,&devh);
 }
 
 JNIEXPORT void JNICALL Java_com_example_usbhandle_MainActivity_close
