@@ -63,6 +63,12 @@ int deviceInfo(libusb_device_handle *h)
     return 0;
 }
 
+static void* readerThread(void *arg)
+{
+    __android_log_print(ANDROID_LOG_INFO,TAG,"readerThread starts");
+    return NULL;
+}
+
 JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_reader
         (JNIEnv *, jobject)
 {
@@ -84,5 +90,9 @@ JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_reader
     __android_log_print(ANDROID_LOG_INFO,TAG,"libusb_claim_interface = %d",r);
     if(r<0) return r;
 
-    return 0;
+    pthread_t tid_reader;
+    r = pthread_create(&tid_reader,NULL,readerThread,NULL);
+    __android_log_print(ANDROID_LOG_INFO,TAG,"pthread_create = %d",r);
+
+    return r;
 }
