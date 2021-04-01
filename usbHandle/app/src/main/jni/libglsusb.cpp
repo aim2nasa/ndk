@@ -75,6 +75,14 @@ JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_reader
     int r = deviceInfo(devh);
     __android_log_print(ANDROID_LOG_INFO,TAG,"deviceInfo = %d",r);
     if(r<0) return r;
-    
+
+    r = libusb_kernel_driver_active(devh,0);
+    __android_log_print(ANDROID_LOG_INFO,TAG,"libusb_kernel_driver_active = %d",r);
+    if(r<0) return r;
+
+    r = libusb_claim_interface(devh,0);
+    __android_log_print(ANDROID_LOG_INFO,TAG,"libusb_claim_interface = %d",r);
+    if(r<0) return r;
+
     return 0;
 }
