@@ -74,7 +74,7 @@ JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_reader
 
     int r = deviceInfo(devh);
     __android_log_print(ANDROID_LOG_INFO,TAG,"deviceInfo = %d",r);
-
     if(r<0) return r;
+    
     return 0;
 }
