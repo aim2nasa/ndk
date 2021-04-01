@@ -58,34 +58,37 @@ public class MainActivity extends AppCompatActivity {
         btnCon.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Log.v(TAG,"Connect button clicked");
-                Toast.makeText(getApplicationContext(), "Connect clicked", Toast.LENGTH_SHORT).show();
+                Log.i(TAG,"Connect button clicked");
 
-                if(usbManager==null)
-                    Toast.makeText(getApplicationContext(), "usbManager = null", Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(getApplicationContext(), "usbManager not null", Toast.LENGTH_SHORT).show();
+                if(usbManager==null) {
+                    Log.e(TAG,"usbManager = null");
+                    return;
+                }
 
                 HashMap<String, UsbDevice> deviceList = usbManager.getDeviceList();
-                if(deviceList == null) Toast.makeText(getApplicationContext(), "deviceList = null", Toast.LENGTH_LONG).show();
-                Toast.makeText(getApplicationContext(), "deviceList="+deviceList.size(), Toast.LENGTH_LONG).show();
+                if(deviceList == null) {
+                    Log.e(TAG,"deviceList = null");
+                    return;
+                }
+                Log.i(TAG,"deviceList="+deviceList.size());
 
                 Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
                 while(deviceIterator.hasNext()) {
                     UsbDevice device = deviceIterator.next();
-                    Toast.makeText(getApplicationContext(), "deviceList="+device.getDeviceName(), Toast.LENGTH_LONG).show();
+                    Log.i(TAG,"deviceName="+device.getDeviceName());
 
                     if(device.getProductId()==PRODUCT_ID && device.getVendorId()==VENDOR_ID) {
-                        Toast.makeText(getApplicationContext(), "FX3 found", Toast.LENGTH_LONG).show();
+                        Log.i(TAG,"FX3 found (ProductID=0x00f0,VendorID=0x04b4)");
 
                         UsbDeviceConnection usbDeviceConnection = usbManager.openDevice(device);
                         if(usbDeviceConnection==null) {
-                            Toast.makeText(getApplicationContext(), "usbDeviceConnection = null", Toast.LENGTH_LONG).show();
+                            Log.e(TAG,"usbDeviceConnection = null");
                         }else{
                             fileDescriptor = usbDeviceConnection.getFileDescriptor();
-                            Toast.makeText(getApplicationContext(), "usbDeviceConnection != null", Toast.LENGTH_LONG).show();
+                            Log.i(TAG,"fileDescriptor="+fileDescriptor);
 
                             usbManager.requestPermission(device,permissionIntent);
+                            Log.i(TAG,"requestPermission done");
                         }
                     }
                 }
@@ -95,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
 
     private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
+            Log.i(TAG, "BroadcastReceiver.onReceive called");
+
             String action = intent.getAction();
             if (ACTION_USB_PERMISSION.equals(action)) {
                 synchronized (this) {
@@ -103,15 +108,16 @@ public class MainActivity extends AppCompatActivity {
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                         if(device != null){
                             //call method to set up device communication
-                            Log.d(TAG, "permission granted for device " + device);
-                            Toast.makeText(getApplicationContext(), "permission granted for device ", Toast.LENGTH_SHORT).show();
-                            ((TextView)findViewById(R.id.tvHello)).setText("open :"+open(fileDescriptor));
+                            Log.i(TAG, "permission granted for device " + device);
+
+                            int r = open(fileDescriptor);
+                            ((TextView)findViewById(R.id.tvHello)).setText("open="+r);
+                            Toast.makeText(getApplicationContext(), "open="+r, Toast.LENGTH_LONG).show();
                         }else
-                            Toast.makeText(getApplicationContext(), "device==null", Toast.LENGTH_LONG).show();
+                            Log.e(TAG, "device = null");
                     }
                     else {
-                        Log.d(TAG, "permission denied for device " + device);
-                        Toast.makeText(getApplicationContext(), "permission denied for device ", Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "permission denied for device " + device);
                     }
                 }
             }
