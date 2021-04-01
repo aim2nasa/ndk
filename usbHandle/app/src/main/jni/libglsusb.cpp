@@ -8,6 +8,7 @@
 #include <string.h>
 
 #define TAG "glsusb"
+#define BUF_SIZE    (8192*256)
 
 static libusb_device_handle *devh = NULL;
 
@@ -69,20 +70,21 @@ unsigned char ep = 0x82;
 static void* readerThread(void *arg)
 {
     int r;
-    unsigned char buf[8192];
     int transferred = 0;
     unsigned int count = 0;
 
+    unsigned char *buf = new unsigned char[BUF_SIZE];
+
     libusb_clear_halt(devh,ep);
     __android_log_print(ANDROID_LOG_INFO,TAG,"readerThread starts...");
-    memset(buf,'\0',sizeof(buf));
+    memset(buf,'\0',BUF_SIZE);
     while(1){
-        r = libusb_bulk_transfer(devh,ep,buf,sizeof(buf),&transferred,0);
+        r = libusb_bulk_transfer(devh,ep,buf,sizeof(unsigned char)*BUF_SIZE,&transferred,0);
         if(r==0){
-            memset(buf,'\0',sizeof(buf));
             if((++count%100)==0) __android_log_print(ANDROID_LOG_INFO,TAG,"%u\r",count);
             continue;
         }else{
+            delete [] buf;
             __android_log_print(ANDROID_LOG_ERROR,TAG,"libusb_bulk_transfer=%d",r);
             return NULL;
         }
