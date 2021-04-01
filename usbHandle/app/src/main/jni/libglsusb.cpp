@@ -36,16 +36,9 @@ JNIEXPORT void JNICALL Java_com_example_usbhandle_MainActivity_close
     libusb_exit(NULL);
 }
 
-JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_reader
-        (JNIEnv *, jobject)
+int deviceInfo(libusb_device_handle *h)
 {
-    __android_log_print(ANDROID_LOG_INFO,TAG,"reader starts");
-    if(!devh) {
-        __android_log_print(ANDROID_LOG_ERROR,TAG,"device handle is null");
-        return -101;
-    }
-
-    libusb_device *dev = libusb_get_device(devh);
+    libusb_device *dev = libusb_get_device(h);
     struct libusb_device_descriptor desc;
     unsigned char string[256];
 
@@ -67,5 +60,21 @@ JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_reader
         if(libusb_get_string_descriptor_ascii(devh,desc.iSerialNumber,string,sizeof(string))>0)
             __android_log_print(ANDROID_LOG_INFO,TAG,"Serial Number: %s",(char*)string);
     }
+    return 0;
+}
+
+JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_reader
+        (JNIEnv *, jobject)
+{
+    __android_log_print(ANDROID_LOG_INFO,TAG,"reader starts");
+    if(!devh) {
+        __android_log_print(ANDROID_LOG_ERROR,TAG,"device handle is null");
+        return -101;
+    }
+
+    int r = deviceInfo(devh);
+    __android_log_print(ANDROID_LOG_INFO,TAG,"deviceInfo = %d",r);
+
+    if(r<0) return r;
     return 0;
 }
