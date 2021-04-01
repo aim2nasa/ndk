@@ -5,6 +5,7 @@
 #include "com_example_usbhandle_MainActivity.h"
 #include <jni/libusb/libusbi.h>
 #include <android/log.h>
+#include <string.h>
 
 #define TAG "glsusb"
 
@@ -63,10 +64,29 @@ int deviceInfo(libusb_device_handle *h)
     return 0;
 }
 
+unsigned char ep = 0x82;
+
 static void* readerThread(void *arg)
 {
-    __android_log_print(ANDROID_LOG_INFO,TAG,"readerThread starts");
-    return NULL;
+    int r;
+    unsigned char buf[8192];
+    int transferred = 0;
+    unsigned int count = 0;
+
+    libusb_clear_halt(devh,ep);
+    __android_log_print(ANDROID_LOG_INFO,TAG,"readerThread starts...");
+    memset(buf,'\0',sizeof(buf));
+    while(1){
+        r = libusb_bulk_transfer(devh,ep,buf,sizeof(buf),&transferred,0);
+        if(r==0){
+            memset(buf,'\0',sizeof(buf));
+            if((++count%100)==0) __android_log_print(ANDROID_LOG_INFO,TAG,"%u\r",count);
+            continue;
+        }else{
+            __android_log_print(ANDROID_LOG_ERROR,TAG,"libusb_bulk_transfer=%d",r);
+            return NULL;
+        }
+    }
 }
 
 JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_reader
