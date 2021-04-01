@@ -30,5 +30,5 @@ JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_open
 JNIEXPORT void JNICALL Java_com_example_usbhandle_MainActivity_close
         (JNIEnv *, jobject)
 {
-
+    libusb_exit(NULL);
 }
