@@ -14,22 +14,35 @@ static libusb_device_handle *devh = NULL;
 
 JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_helloNNDK
   (JNIEnv *, jobject, jint v)
-  {
-    return v+10;
-  }
+{
+    __android_log_print(ANDROID_LOG_INFO,TAG,"helloNDK");
+    return v+20;
+}
 
 JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_open
         (JNIEnv *, jobject, jint fileDescriptor)
 {
+    __android_log_print(ANDROID_LOG_INFO,TAG,"open starts");
     int r;
 
     r = libusb_set_option(NULL, LIBUSB_OPTION_WEAK_AUTHORITY, NULL);
-    if(r<0) return r;
+    if(r<0) {
+        __android_log_print(ANDROID_LOG_INFO,TAG,"libusb_set_option error=%d",r);
+        return r;
+    }
 
     r = libusb_init(NULL);
-    if(r<0) return r;
+    if(r<0) {
+        __android_log_print(ANDROID_LOG_INFO,TAG,"libusb_init error=%d",r);
+        return r;
+    }
 
-    return libusb_wrap_sys_device(NULL,(intptr_t)fileDescriptor,&devh);
+    r = libusb_wrap_sys_device(NULL,(intptr_t)fileDescriptor,&devh);
+    if(r<0) {
+        __android_log_print(ANDROID_LOG_INFO,TAG,"libusb_wrap_sys_device error=%d",r);
+        return r;
+    }
+    return 0;
 }
 
 JNIEXPORT void JNICALL Java_com_example_usbhandle_MainActivity_close
