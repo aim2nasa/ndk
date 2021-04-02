@@ -8,7 +8,7 @@
 #include <string.h>
 
 #define TAG "glsusb"
-#define BUF_SIZE    (8192*7)
+#define BUF_SIZE    (8192*8)
 
 static libusb_device_handle *devh = NULL;
 
