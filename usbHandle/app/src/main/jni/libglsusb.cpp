@@ -8,7 +8,7 @@
 #include <string.h>
 
 #define TAG "glsusb"
-#define BUF_SIZE    (8192*256)
+#define BUF_SIZE    (8192*7)
 
 static libusb_device_handle *devh = NULL;
 
@@ -81,7 +81,7 @@ static void* readerThread(void *arg)
     while(1){
         r = libusb_bulk_transfer(devh,ep,buf,sizeof(unsigned char)*BUF_SIZE,&transferred,0);
         if(r==0){
-            if((++count%100)==0) __android_log_print(ANDROID_LOG_INFO,TAG,"%u\r",count);
+            __android_log_print(ANDROID_LOG_INFO,TAG,"%u %dbytes",++count,transferred);
             continue;
         }else{
             delete [] buf;
