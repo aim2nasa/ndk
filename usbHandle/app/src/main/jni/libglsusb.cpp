@@ -121,10 +121,6 @@ JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_reader
     __android_log_print(ANDROID_LOG_INFO,TAG,"libusb_kernel_driver_active = %d",r);
     if(r<0) return r;
 
-    r = libusb_claim_interface(devh,0);
-    __android_log_print(ANDROID_LOG_INFO,TAG,"libusb_claim_interface = %d",r);
-    if(r<0) return r;
-
     pthread_t tid_reader;
     r = pthread_create(&tid_reader,NULL,readerThread,NULL);
     __android_log_print(ANDROID_LOG_INFO,TAG,"pthread_create = %d",r);
