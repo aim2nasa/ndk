@@ -103,6 +103,14 @@ JNIEXPORT void JNICALL Java_com_example_usbhandle_MainActivity_close
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_reader
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_example_usbhandle_MainActivity
+ * Method:    count
+ * Signature: ()J
+ */
+JNIEXPORT jlong JNICALL Java_com_example_usbhandle_MainActivity_count
         (JNIEnv *, jobject);
 
 #ifdef __cplusplus

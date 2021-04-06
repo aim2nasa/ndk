@@ -11,6 +11,7 @@
 #define BUF_SIZE    (8192*8)
 
 static libusb_device_handle *devh = NULL;
+static unsigned int count;
 
 JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_helloNNDK
   (JNIEnv *, jobject, jint v)
@@ -84,13 +85,13 @@ static void* readerThread(void *arg)
 {
     int r;
     int transferred = 0;
-    unsigned int count = 0;
 
     unsigned char *buf = new unsigned char[BUF_SIZE];
 
     libusb_clear_halt(devh,ep);
     __android_log_print(ANDROID_LOG_INFO,TAG,"readerThread starts...");
     memset(buf,'\0',BUF_SIZE);
+    count = 0;
     while(1){
         r = libusb_bulk_transfer(devh,ep,buf,sizeof(unsigned char)*BUF_SIZE,&transferred,0);
         if(r==0){
@@ -126,4 +127,10 @@ JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_reader
     __android_log_print(ANDROID_LOG_INFO,TAG,"pthread_create = %d",r);
 
     return r;
+}
+
+JNIEXPORT jlong JNICALL Java_com_example_usbhandle_MainActivity_count
+        (JNIEnv *, jobject)
+{
+    return count;
 }

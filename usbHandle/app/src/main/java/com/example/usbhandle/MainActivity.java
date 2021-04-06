@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     public native int open(int fileDescriptor);
     public native void close();
     public native int reader();
+    public native long count();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
