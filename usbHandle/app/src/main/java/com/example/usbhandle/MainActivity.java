@@ -11,6 +11,8 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -33,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private int fileDescriptor;
     public static final int PRODUCT_ID = 0x00f0;    //FX3
     public static final int VENDOR_ID = 0x04b4;     //Cypress
+    private static Handler handler;
 
     public native int helloNNDK(int v);
     public native int open(int fileDescriptor);
@@ -51,6 +54,29 @@ public class MainActivity extends AppCompatActivity {
         int result = helloNNDK(5);
 
         ((TextView)findViewById(R.id.tvHello)).setText("result :"+result);
+
+        handler = new Handler(){
+            @Override
+            public void handleMessage(Message msg){
+                ((TextView)findViewById(R.id.tvHello)).setText("count:"+msg.obj);
+            }
+        };
+
+        class NewRunnerable implements Runnable{
+            @Override
+            public void run() {
+                while(true){
+                    try{
+                        Thread.sleep(100);
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                    Message msg = new Message();
+                    msg.obj = Long.toString(count());
+                    handler.sendMessage(msg);
+                }
+            }
+        };
 
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         PendingIntent permissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
@@ -91,6 +117,9 @@ public class MainActivity extends AppCompatActivity {
 
                             usbManager.requestPermission(device,permissionIntent);
                             Log.i(TAG,"requestPermission done");
+
+                            NewRunnerable nr= new NewRunnerable();
+                            (new Thread(nr)).start();
                         }
                     }
                 }
