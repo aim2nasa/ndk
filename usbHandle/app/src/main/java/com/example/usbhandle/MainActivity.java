@@ -15,12 +15,16 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,12 +40,26 @@ public class MainActivity extends AppCompatActivity {
     public static final int PRODUCT_ID = 0x00f0;    //FX3
     public static final int VENDOR_ID = 0x04b4;     //Cypress
     private static Handler handler;
+    private ListView list;
 
     public native int helloNNDK(int v);
     public native int open(int fileDescriptor);
     public native void close();
     public native int reader();
     public native long count();
+
+    private void createList()
+    {
+        list = (ListView)findViewById(R.id.list);
+        List<String> data = new ArrayList<>();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,data);
+        list.setAdapter(adapter);
+
+        data.add("1st element");
+        data.add("2nd element");
+        data.add("3rd element");
+        adapter.notifyDataSetChanged();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
         int result = helloNNDK(5);
 
         ((TextView)findViewById(R.id.tvHello)).setText("result :"+result);
+
+        createList();
 
         handler = new Handler(){
             @Override
