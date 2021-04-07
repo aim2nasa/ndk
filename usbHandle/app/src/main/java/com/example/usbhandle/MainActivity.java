@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
     public static final int VENDOR_ID = 0x04b4;     //Cypress
     private static Handler handler;
     private ListView list;
+    List<String> listData;
+    ArrayAdapter<String> listAdapter;
 
     public native int helloNNDK(int v);
     public native int open(int fileDescriptor);
@@ -51,14 +53,23 @@ public class MainActivity extends AppCompatActivity {
     private void createList()
     {
         list = (ListView)findViewById(R.id.list);
-        List<String> data = new ArrayList<>();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,data);
-        list.setAdapter(adapter);
+        listData = new ArrayList<>();
+        listAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,listData);
+        list.setAdapter(listAdapter);
+    }
 
-        data.add("1st element");
-        data.add("2nd element");
-        data.add("3rd element");
-        adapter.notifyDataSetChanged();
+    private int LI(String tag,String msg)
+    {
+        listData.add(msg);
+        listAdapter.notifyDataSetChanged();
+        return Log.i(tag,msg);
+    }
+
+    private int LE(String tag,String msg)
+    {
+        listData.add(msg);
+        listAdapter.notifyDataSetChanged();
+        return Log.e(tag,msg);
     }
 
     @Override
@@ -106,37 +117,37 @@ public class MainActivity extends AppCompatActivity {
         btnCon.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Log.i(TAG,"Connect button clicked");
+                LI(TAG,"Connect button clicked");
 
                 if(usbManager==null) {
-                    Log.e(TAG,"usbManager = null");
+                    LE(TAG,"usbManager = null");
                     return;
                 }
 
                 HashMap<String, UsbDevice> deviceList = usbManager.getDeviceList();
                 if(deviceList == null) {
-                    Log.e(TAG,"deviceList = null");
+                    LE(TAG,"deviceList = null");
                     return;
                 }
-                Log.i(TAG,"deviceList="+deviceList.size());
+                LI(TAG,"deviceList="+deviceList.size());
 
                 Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
                 while(deviceIterator.hasNext()) {
                     UsbDevice device = deviceIterator.next();
-                    Log.i(TAG,"deviceName="+device.getDeviceName());
+                    LI(TAG,"deviceName="+device.getDeviceName());
 
                     if(device.getProductId()==PRODUCT_ID && device.getVendorId()==VENDOR_ID) {
-                        Log.i(TAG,"FX3 found (ProductID=0x00f0,VendorID=0x04b4)");
+                        LI(TAG,"FX3 found (ProductID=0x00f0,VendorID=0x04b4)");
 
                         UsbDeviceConnection usbDeviceConnection = usbManager.openDevice(device);
                         if(usbDeviceConnection==null) {
-                            Log.e(TAG,"usbDeviceConnection = null");
+                            LE(TAG,"usbDeviceConnection = null");
                         }else{
                             fileDescriptor = usbDeviceConnection.getFileDescriptor();
-                            Log.i(TAG,"fileDescriptor="+fileDescriptor);
+                            LI(TAG,"fileDescriptor="+fileDescriptor);
 
                             usbManager.requestPermission(device,permissionIntent);
-                            Log.i(TAG,"requestPermission done");
+                            LI(TAG,"requestPermission done");
 
                             NewRunnerable nr= new NewRunnerable();
                             (new Thread(nr)).start();
@@ -149,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
-            Log.i(TAG, "BroadcastReceiver.onReceive called");
+            LI(TAG, "BroadcastReceiver.onReceive called");
 
             String action = intent.getAction();
             if (ACTION_USB_PERMISSION.equals(action)) {
@@ -159,18 +170,18 @@ public class MainActivity extends AppCompatActivity {
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                         if(device != null){
                             //call method to set up device communication
-                            Log.i(TAG, "permission granted for device " + device);
+                            LI(TAG, "permission granted for device " + device);
 
                             int r = open(fileDescriptor);
                             ((TextView)findViewById(R.id.tvHello)).setText("open="+r);
                             Toast.makeText(getApplicationContext(), "open="+r, Toast.LENGTH_LONG).show();
 
-                            Log.i(TAG, "reader = " + reader());
+                            LI(TAG, "reader = " + reader());
                         }else
-                            Log.e(TAG, "device = null");
+                            LE(TAG, "device = null");
                     }
                     else {
-                        Log.e(TAG, "permission denied for device " + device);
+                        LE(TAG, "permission denied for device " + device);
                     }
                 }
             }
