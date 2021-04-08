@@ -117,16 +117,8 @@ JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_reader
         (JNIEnv *, jobject)
 {
     __android_log_print(ANDROID_LOG_INFO,TAG,"reader starts");
-    if(!devh) {
-        __android_log_print(ANDROID_LOG_ERROR,TAG,"device handle is null");
-        return -101;
-    }
-
     pthread_t tid;
-    int r = pthread_create(&tid,NULL,runThread,&epi);
-    __android_log_print(ANDROID_LOG_INFO,TAG,"pthread_create = %d",r);
-
-    return r;
+    return pthread_create(&tid,NULL,runThread,&epi);
 }
 
 JNIEXPORT jlong JNICALL Java_com_example_usbhandle_MainActivity_count
