@@ -96,7 +96,6 @@ static void* runThread(void *arg)
         r = libusb_bulk_transfer(devh,ep,buf,sizeof(unsigned char)*BUF_SIZE,&transferred,0);
         if(r==0){
             __android_log_print(ANDROID_LOG_INFO,TAG,"%u %dbytes",++count,transferred);
-            continue;
         }else{
             delete [] buf;
             __android_log_print(ANDROID_LOG_ERROR,TAG,"libusb_bulk_transfer=%d",r);
