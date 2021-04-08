@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                         if(device != null){
                             //call method to set up device communication
-                            LI(TAG, "permission granted for device " + device);
+                            LI(TAG, "permission granted for device ");
 
                             int r = open(fileDescriptor);
                             ((TextView)findViewById(R.id.tvHello)).setText("open="+r);
