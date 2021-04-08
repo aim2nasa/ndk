@@ -80,7 +80,7 @@ int deviceInfo(libusb_device_handle *h)
     return 0;
 }
 
-static void* readerThread(void *arg)
+static void* runThread(void *arg)
 {
     int r;
     int transferred = 0;
@@ -89,7 +89,7 @@ static void* readerThread(void *arg)
     unsigned char *buf = new unsigned char[BUF_SIZE];
 
     libusb_clear_halt(devh,ep);
-    __android_log_print(ANDROID_LOG_INFO,TAG,"readerThread starts(ep:0x%x)...",ep);
+    __android_log_print(ANDROID_LOG_INFO,TAG,"runThread starts(ep:0x%x)...",ep);
     memset(buf,'\0',BUF_SIZE);
     count = 0;
     while(1){
@@ -122,8 +122,8 @@ JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_reader
     __android_log_print(ANDROID_LOG_INFO,TAG,"libusb_kernel_driver_active = %d",r);
     if(r<0) return r;
 
-    pthread_t tid_reader;
-    r = pthread_create(&tid_reader,NULL,readerThread,&epi);
+    pthread_t tid;
+    r = pthread_create(&tid,NULL,runThread,&epi);
     __android_log_print(ANDROID_LOG_INFO,TAG,"pthread_create = %d",r);
 
     return r;
