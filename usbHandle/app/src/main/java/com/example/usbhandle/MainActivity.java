@@ -180,8 +180,12 @@ public class MainActivity extends AppCompatActivity {
                             LI(TAG, "permission granted for device ");
 
                             int r = open(fileDescriptor);
-                            LI(TAG, "open="+r);
-                            LI(TAG, "reader = " + reader());
+                            if(r==0) {
+                                LI(TAG,"Device open successful");
+                                LI(TAG, "reader = " + reader());
+                            }else{
+                                LE(TAG, "Device open failure, error=" + r);
+                            }
                         }else
                             LE(TAG, "device = null");
                     }
