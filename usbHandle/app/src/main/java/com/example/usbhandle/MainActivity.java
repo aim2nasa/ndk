@@ -97,11 +97,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         createButtons();
-
-        int result = helloNNDK(5);
-
-        ((TextView)findViewById(R.id.tvHello)).setText("result :"+result);
-
         createList();
 
         handler = new Handler(){
