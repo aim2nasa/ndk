@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Button btnCon;
+    private Button btnSnd;
+    private Button btnRcv;
     private static final String TAG = "Tag";
     private static final String ACTION_USB_PERMISSION = "com.example.usbHandle.USB_PERMISSION";
     private UsbManager usbManager;
@@ -85,7 +87,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         btnCon = (Button)findViewById(R.id.button_Connect);
+        btnSnd = (Button)findViewById(R.id.button_Send);
+        btnRcv = (Button)findViewById(R.id.button_Recv);
         btnCon.setEnabled(true);
+        btnSnd.setEnabled(false);
+        btnRcv.setEnabled(false);
 
         int result = helloNNDK(5);
 
@@ -163,6 +169,20 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        btnRcv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LI(TAG, "Receive button clicked");
+
+                int r = reader();
+                if(r==0) {
+                    LI(TAG, "Reader starts successfully");
+                }else{
+                    LI(TAG, "Reader failed to start, error=" + r);
+                }
+            }
+        });
     }
 
     private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
@@ -183,12 +203,8 @@ public class MainActivity extends AppCompatActivity {
                             if(r==0) {
                                 LI(TAG,"Device open successful");
 
-                                r = reader();
-                                if(r==0) {
-                                    LI(TAG, "Reader starts successfully");
-                                }else{
-                                    LI(TAG, "Reader failed to start, error=" + r);
-                                }
+                                btnCon.setEnabled(false);
+                                btnRcv.setEnabled(true);
                             }else{
                                 LE(TAG, "Device open failure, error=" + r);
                             }
