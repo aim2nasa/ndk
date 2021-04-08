@@ -21,39 +21,7 @@ JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_helloNNDK
     return v+20;
 }
 
-JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_open
-        (JNIEnv *, jobject, jint fileDescriptor)
-{
-    __android_log_print(ANDROID_LOG_INFO,TAG,"open starts");
-    int r;
-
-    r = libusb_set_option(NULL, LIBUSB_OPTION_WEAK_AUTHORITY, NULL);
-    if(r<0) {
-        __android_log_print(ANDROID_LOG_INFO,TAG,"libusb_set_option error=%d",r);
-        return r;
-    }
-
-    r = libusb_init(NULL);
-    if(r<0) {
-        __android_log_print(ANDROID_LOG_INFO,TAG,"libusb_init error=%d",r);
-        return r;
-    }
-
-    r = libusb_wrap_sys_device(NULL,(intptr_t)fileDescriptor,&devh);
-    if(r<0) {
-        __android_log_print(ANDROID_LOG_INFO,TAG,"libusb_wrap_sys_device error=%d",r);
-        return r;
-    }
-    return 0;
-}
-
-JNIEXPORT void JNICALL Java_com_example_usbhandle_MainActivity_close
-        (JNIEnv *, jobject)
-{
-    libusb_exit(NULL);
-}
-
-int deviceInfo(libusb_device_handle *h)
+static int deviceInfo(libusb_device_handle *h)
 {
     libusb_device *dev = libusb_get_device(h);
     struct libusb_device_descriptor desc;
@@ -78,6 +46,47 @@ int deviceInfo(libusb_device_handle *h)
             __android_log_print(ANDROID_LOG_INFO,TAG,"Serial Number: %s",(char*)string);
     }
     return 0;
+}
+
+JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_open
+        (JNIEnv *, jobject, jint fileDescriptor)
+{
+    __android_log_print(ANDROID_LOG_INFO,TAG,"open starts");
+    int r;
+
+    r = libusb_set_option(NULL, LIBUSB_OPTION_WEAK_AUTHORITY, NULL);
+    if(r<0) {
+        __android_log_print(ANDROID_LOG_INFO,TAG,"libusb_set_option error=%d",r);
+        return r;
+    }
+
+    r = libusb_init(NULL);
+    if(r<0) {
+        __android_log_print(ANDROID_LOG_INFO,TAG,"libusb_init error=%d",r);
+        return r;
+    }
+
+    r = libusb_wrap_sys_device(NULL,(intptr_t)fileDescriptor,&devh);
+    if(r<0) {
+        __android_log_print(ANDROID_LOG_INFO,TAG,"libusb_wrap_sys_device error=%d",r);
+        return r;
+    }
+
+    r = deviceInfo(devh);
+    __android_log_print(ANDROID_LOG_INFO,TAG,"deviceInfo = %d",r);
+    if(r<0) return r;
+
+    r = libusb_kernel_driver_active(devh,0);
+    __android_log_print(ANDROID_LOG_INFO,TAG,"libusb_kernel_driver_active = %d",r);
+    if(r<0) return r;
+
+    return 0;
+}
+
+JNIEXPORT void JNICALL Java_com_example_usbhandle_MainActivity_close
+        (JNIEnv *, jobject)
+{
+    libusb_exit(NULL);
 }
 
 static void* runThread(void *arg)
@@ -113,16 +122,8 @@ JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_reader
         return -101;
     }
 
-    int r = deviceInfo(devh);
-    __android_log_print(ANDROID_LOG_INFO,TAG,"deviceInfo = %d",r);
-    if(r<0) return r;
-
-    r = libusb_kernel_driver_active(devh,0);
-    __android_log_print(ANDROID_LOG_INFO,TAG,"libusb_kernel_driver_active = %d",r);
-    if(r<0) return r;
-
     pthread_t tid;
-    r = pthread_create(&tid,NULL,runThread,&epi);
+    int r = pthread_create(&tid,NULL,runThread,&epi);
     __android_log_print(ANDROID_LOG_INFO,TAG,"pthread_create = %d",r);
 
     return r;
