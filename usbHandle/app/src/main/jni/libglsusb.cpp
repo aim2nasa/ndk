@@ -13,6 +13,7 @@
 static libusb_device_handle *devh = NULL;
 static unsigned int count;
 unsigned char epi = 0x82;   //Input EP
+unsigned char epo = 0x02;   //Output EP
 
 JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_helloNNDK
   (JNIEnv *, jobject, jint v)
@@ -125,4 +126,12 @@ JNIEXPORT jlong JNICALL Java_com_example_usbhandle_MainActivity_count
         (JNIEnv *, jobject)
 {
     return count;
+}
+
+JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_writer
+        (JNIEnv *, jobject)
+{
+    __android_log_print(ANDROID_LOG_INFO,TAG,"writer starts");
+    pthread_t tid;
+    return pthread_create(&tid,NULL,runThread,&epo);
 }

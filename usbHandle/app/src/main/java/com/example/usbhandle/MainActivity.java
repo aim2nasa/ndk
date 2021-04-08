@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     public native void close();
     public native int reader();
     public native long count();
+    public native int writer();
 
     private void createList()
     {
@@ -173,6 +174,9 @@ public class MainActivity extends AppCompatActivity {
         btnRcv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                btnCon.setEnabled(false);
+                btnSnd.setEnabled(false);
+                btnRcv.setEnabled(false);
                 LI(TAG, "Receive button clicked");
 
                 int r = reader();
@@ -180,6 +184,23 @@ public class MainActivity extends AppCompatActivity {
                     LI(TAG, "Reader starts successfully");
                 }else{
                     LI(TAG, "Reader failed to start, error=" + r);
+                }
+            }
+        });
+
+        btnSnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btnCon.setEnabled(false);
+                btnSnd.setEnabled(false);
+                btnRcv.setEnabled(false);
+                LI(TAG, "Send button clicked");
+
+                int r = writer();
+                if(r==0) {
+                    LI(TAG, "Writer starts successfully");
+                }else{
+                    LI(TAG, "Writer failed to start, error=" + r);
                 }
             }
         });
@@ -204,6 +225,7 @@ public class MainActivity extends AppCompatActivity {
                                 LI(TAG,"Device open successful");
 
                                 btnCon.setEnabled(false);
+                                btnSnd.setEnabled(true);
                                 btnRcv.setEnabled(true);
                             }else{
                                 LE(TAG, "Device open failure, error=" + r);
