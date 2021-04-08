@@ -60,6 +60,16 @@ public class MainActivity extends AppCompatActivity {
         list.setAdapter(listAdapter);
     }
 
+    private void createButtons()
+    {
+        btnCon = (Button)findViewById(R.id.button_Connect);
+        btnSnd = (Button)findViewById(R.id.button_Send);
+        btnRcv = (Button)findViewById(R.id.button_Recv);
+        btnCon.setEnabled(true);
+        btnSnd.setEnabled(false);
+        btnRcv.setEnabled(false);
+    }
+
     private boolean listDataAdd(String msg)
     {
         if(listData.add(msg)) {
@@ -86,12 +96,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btnCon = (Button)findViewById(R.id.button_Connect);
-        btnSnd = (Button)findViewById(R.id.button_Send);
-        btnRcv = (Button)findViewById(R.id.button_Recv);
-        btnCon.setEnabled(true);
-        btnSnd.setEnabled(false);
-        btnRcv.setEnabled(false);
+        createButtons();
 
         int result = helloNNDK(5);
 
