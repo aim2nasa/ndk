@@ -12,6 +12,7 @@
 
 static libusb_device_handle *devh = NULL;
 static unsigned int count;
+unsigned char epi = 0x82;   //Input EP
 
 JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_helloNNDK
   (JNIEnv *, jobject, jint v)
@@ -79,8 +80,6 @@ int deviceInfo(libusb_device_handle *h)
     return 0;
 }
 
-unsigned char ep = 0x82;
-
 static void* readerThread(void *arg)
 {
     int r;
@@ -88,12 +87,12 @@ static void* readerThread(void *arg)
 
     unsigned char *buf = new unsigned char[BUF_SIZE];
 
-    libusb_clear_halt(devh,ep);
+    libusb_clear_halt(devh,epi);
     __android_log_print(ANDROID_LOG_INFO,TAG,"readerThread starts...");
     memset(buf,'\0',BUF_SIZE);
     count = 0;
     while(1){
-        r = libusb_bulk_transfer(devh,ep,buf,sizeof(unsigned char)*BUF_SIZE,&transferred,0);
+        r = libusb_bulk_transfer(devh,epi,buf,sizeof(unsigned char)*BUF_SIZE,&transferred,0);
         if(r==0){
             __android_log_print(ANDROID_LOG_INFO,TAG,"%u %dbytes",++count,transferred);
             continue;
