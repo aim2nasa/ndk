@@ -58,17 +58,24 @@ public class MainActivity extends AppCompatActivity {
         list.setAdapter(listAdapter);
     }
 
+    private boolean listDataAdd(String msg)
+    {
+        if(listData.add(msg)) {
+            listAdapter.notifyDataSetChanged();
+            return true;
+        }
+        return false;
+    }
+
     private int LI(String tag,String msg)
     {
-        listData.add(msg);
-        listAdapter.notifyDataSetChanged();
+        listDataAdd(msg);
         return Log.i(tag,msg);
     }
 
     private int LE(String tag,String msg)
     {
-        listData.add(msg);
-        listAdapter.notifyDataSetChanged();
+        listDataAdd(msg);
         return Log.e(tag,msg);
     }
 
