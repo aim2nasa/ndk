@@ -180,9 +180,7 @@ public class MainActivity extends AppCompatActivity {
                             LI(TAG, "permission granted for device ");
 
                             int r = open(fileDescriptor);
-                            ((TextView)findViewById(R.id.tvHello)).setText("open="+r);
-                            Toast.makeText(getApplicationContext(), "open="+r, Toast.LENGTH_LONG).show();
-
+                            LI(TAG, "open="+r);
                             LI(TAG, "reader = " + reader());
                         }else
                             LE(TAG, "device = null");
