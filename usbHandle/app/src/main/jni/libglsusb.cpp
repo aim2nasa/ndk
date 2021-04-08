@@ -84,15 +84,16 @@ static void* readerThread(void *arg)
 {
     int r;
     int transferred = 0;
+    unsigned char ep = *((unsigned char*)arg);
 
     unsigned char *buf = new unsigned char[BUF_SIZE];
 
-    libusb_clear_halt(devh,epi);
-    __android_log_print(ANDROID_LOG_INFO,TAG,"readerThread starts...");
+    libusb_clear_halt(devh,ep);
+    __android_log_print(ANDROID_LOG_INFO,TAG,"readerThread starts(ep:0x%x)...",ep);
     memset(buf,'\0',BUF_SIZE);
     count = 0;
     while(1){
-        r = libusb_bulk_transfer(devh,epi,buf,sizeof(unsigned char)*BUF_SIZE,&transferred,0);
+        r = libusb_bulk_transfer(devh,ep,buf,sizeof(unsigned char)*BUF_SIZE,&transferred,0);
         if(r==0){
             __android_log_print(ANDROID_LOG_INFO,TAG,"%u %dbytes",++count,transferred);
             continue;
@@ -122,7 +123,7 @@ JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_reader
     if(r<0) return r;
 
     pthread_t tid_reader;
-    r = pthread_create(&tid_reader,NULL,readerThread,NULL);
+    r = pthread_create(&tid_reader,NULL,readerThread,&epi);
     __android_log_print(ANDROID_LOG_INFO,TAG,"pthread_create = %d",r);
 
     return r;
