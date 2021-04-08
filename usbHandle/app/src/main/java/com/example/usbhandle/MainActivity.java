@@ -182,7 +182,13 @@ public class MainActivity extends AppCompatActivity {
                             int r = open(fileDescriptor);
                             if(r==0) {
                                 LI(TAG,"Device open successful");
-                                LI(TAG, "reader = " + reader());
+
+                                r = reader();
+                                if(r==0) {
+                                    LI(TAG, "Reader starts successfully");
+                                }else{
+                                    LI(TAG, "Reader failed to start, error=" + r);
+                                }
                             }else{
                                 LE(TAG, "Device open failure, error=" + r);
                             }
