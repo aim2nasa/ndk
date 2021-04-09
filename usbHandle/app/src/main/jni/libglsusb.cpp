@@ -14,6 +14,7 @@ static libusb_device_handle *devh = NULL;
 static unsigned int count;
 unsigned char epi = 0x82;   //Input EP
 unsigned char epo = 0x02;   //Output EP
+unsigned char sync[4] = { 0x07,0x3a,0xb6,0x99 };
 
 JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_helloNNDK
   (JNIEnv *, jobject, jint v)
@@ -88,6 +89,19 @@ JNIEXPORT void JNICALL Java_com_example_usbhandle_MainActivity_close
         (JNIEnv *, jobject)
 {
     libusb_exit(NULL);
+}
+
+static bool isInputEP(unsigned char ep)
+{
+    if(ep&0x80) return true;
+    return false;
+}
+
+static bool syncFound(unsigned char *buf,int length)
+{
+    if(length<sizeof(sync)) return false;
+    if(memcmp(buf,sync,sizeof(sync))==0) return true;
+    return false;
 }
 
 static void* runThread(void *arg)
