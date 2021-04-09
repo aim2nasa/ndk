@@ -15,6 +15,12 @@ static unsigned int count;
 unsigned char epi = 0x82;   //Input EP
 unsigned char epo = 0x02;   //Output EP
 unsigned char sync[4] = { 0x07,0x3a,0xb6,0x99 };
+typedef enum{
+    NOT_DEF=-1,
+    STREAM_MODE,
+    FILE_MODE
+} Mode;
+static Mode mode = NOT_DEF;
 
 JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_helloNNDK
   (JNIEnv *, jobject, jint v)
