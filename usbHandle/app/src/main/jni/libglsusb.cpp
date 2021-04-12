@@ -126,6 +126,9 @@ static void* runThread(void *arg)
         r = libusb_bulk_transfer(devh,ep,buf,sizeof(unsigned char)*BUF_SIZE,&transferred,0);
         if(r==0){
             __android_log_print(ANDROID_LOG_INFO,TAG,"%u %dbytes",++count,transferred);
+            if(isInputEP(ep)&&syncFound(buf,sizeof(sync))) {
+                __android_log_print(ANDROID_LOG_INFO,TAG,"InputEP(0x%x) Sync found",ep);
+            }
         }else{
             delete [] buf;
             __android_log_print(ANDROID_LOG_ERROR,TAG,"libusb_bulk_transfer=%d",r);
