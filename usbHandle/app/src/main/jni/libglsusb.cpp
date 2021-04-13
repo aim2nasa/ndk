@@ -6,6 +6,7 @@
 #include <jni/libusb/libusbi.h>
 #include <android/log.h>
 #include <string.h>
+#include "fileinfo.h"
 
 #define TAG "glsusb"
 #define BUF_SIZE    (8192*8*4)
@@ -110,6 +111,35 @@ static bool syncFound(unsigned char *buf,int length)
     return false;
 }
 
+static void convertNameFromUnicodeToAscii(unsigned char *buffer, int bufferSize, char *targetName)
+{
+    int i = 0;
+    for(int j=0;j<bufferSize;j+=2) targetName[i++] = buffer[j];
+}
+
+static int convertNameSizeFromUnicodeToAscii(unsigned char *buffer)
+{
+    int unicodeSize;
+    memcpy(&unicodeSize, buffer, sizeof(int));
+    return unicodeSize/2;
+}
+
+static int getFileInfo(unsigned char *buffer, int bufferSize, int syncSize, FILEINFO &info)
+{
+    int nOffset = syncSize;
+    memset(info.name_, 0, sizeof(FILEINFO::name_));
+    memcpy(&info.index_, buffer + nOffset, sizeof(int)); nOffset += sizeof(int);
+    memcpy(&info.files_, buffer + nOffset, sizeof(int)); nOffset += sizeof(int);
+
+    info.nameSize_ = convertNameSizeFromUnicodeToAscii(buffer + nOffset); nOffset += sizeof(int);
+    convertNameFromUnicodeToAscii(buffer + nOffset, 2*info.nameSize_, info.name_); nOffset += 2*info.nameSize_;
+
+    memcpy(&info.size_, buffer + nOffset, sizeof(unsigned int)); nOffset += sizeof(unsigned int);
+
+    assert(nOffset <= bufferSize);	//len보다 작거나 같다는 가정
+    return nOffset;
+}
+
 static void* runThread(void *arg)
 {
     int r;
@@ -128,6 +158,15 @@ static void* runThread(void *arg)
             __android_log_print(ANDROID_LOG_INFO,TAG,"%u %dbytes",++count,transferred);
             if(isInputEP(ep)&&syncFound(buf,sizeof(sync))) {
                 __android_log_print(ANDROID_LOG_INFO,TAG,"InputEP(0x%x) Sync found",ep);
+
+                FILEINFO info;
+                memset(&info,0,sizeof(info));
+                getFileInfo(buf, transferred, sizeof(sync),info);
+                __android_log_print(ANDROID_LOG_INFO,TAG,"index:%d",info.index_);
+                __android_log_print(ANDROID_LOG_INFO,TAG,"files:%d",info.files_);
+                __android_log_print(ANDROID_LOG_INFO,TAG,"nameSize:%d",info.nameSize_);
+                __android_log_print(ANDROID_LOG_INFO,TAG,"%s",info.name_);
+                __android_log_print(ANDROID_LOG_INFO,TAG,"size:%u",info.size_);
             }
         }else{
             delete [] buf;
