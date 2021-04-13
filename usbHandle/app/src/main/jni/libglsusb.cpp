@@ -171,9 +171,12 @@ static void* runThread(void *arg)
         }else{
             delete [] buf;
             __android_log_print(ANDROID_LOG_ERROR,TAG,"libusb_bulk_transfer=%d",r);
-            return NULL;
+            goto cleanup;
         }
     }
+
+cleanup:
+    return NULL;
 }
 
 JNIEXPORT jint JNICALL Java_com_example_usbhandle_MainActivity_reader
