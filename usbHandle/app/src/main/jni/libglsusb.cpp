@@ -163,6 +163,8 @@ static void* runThread(void *arg)
     }else
         __android_log_print(ANDROID_LOG_INFO,TAG,"fopen failed, error=%s",strerror(errno));
 
+    size_t bytes;
+    FILEINFO info;
     FILE *pFile = 0;
     while(1){
         r = libusb_bulk_transfer(devh,ep,buf,sizeof(unsigned char)*BUF_SIZE,&transferred,0);
@@ -171,7 +173,7 @@ static void* runThread(void *arg)
             if(isInputEP(ep)&&syncFound(buf,sizeof(sync))) {
                 __android_log_print(ANDROID_LOG_INFO,TAG,"InputEP(0x%x) Sync found",ep);
 
-                FILEINFO info;
+                bytes = 0;
                 memset(&info,0,sizeof(info));
                 getFileInfo(buf, transferred, sizeof(sync),info);
                 __android_log_print(ANDROID_LOG_INFO,TAG,"index:%d",info.index_);
@@ -185,10 +187,28 @@ static void* runThread(void *arg)
                 __android_log_print(ANDROID_LOG_INFO,TAG,"file path:%s",path);
                 pFile = fopen(path,"w");
                 if(pFile) {
-                    fclose(pFile);
                     __android_log_print(ANDROID_LOG_INFO, TAG, "fopen(%s) ok", path);
                 }else
                     __android_log_print(ANDROID_LOG_INFO,TAG,"fopen(%s) failed, error=%s",path,strerror(errno));
+            }else{
+                if(pFile) {
+                    __android_log_print(ANDROID_LOG_INFO,TAG,"bytes: %zu received: %d",bytes,transferred);
+                    if(bytes+transferred <= info.size_) {
+                        size_t szWrite = fwrite(buf,1,transferred,pFile);
+                        __android_log_print(ANDROID_LOG_INFO,TAG,"bytes: %zu written to file",szWrite);
+                        assert(szWrite==transferred);
+                        bytes += transferred;
+                        if(bytes == info.size_) fclose(pFile);
+                    }else if(bytes+transferred > info.size_) {
+                        size_t szWrite = fwrite(buf,1,info.size_-bytes,pFile);
+                        assert(szWrite==(info.size_-bytes));
+                        __android_log_print(ANDROID_LOG_INFO,TAG,"bytes: %zu written to file",szWrite);
+                        bytes += (info.size_-bytes);
+                        assert(bytes==info.size_);
+                        fclose(pFile);
+                    }
+                    __android_log_print(ANDROID_LOG_INFO,TAG,"file:%s bytes/Total= %zu/%u",info.name_,bytes,info.size_);
+                }
             }
         }else{
             delete [] buf;
