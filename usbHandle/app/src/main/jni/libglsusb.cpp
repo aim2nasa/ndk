@@ -154,15 +154,6 @@ static void* runThread(void *arg)
     memset(buf,'\0',BUF_SIZE);
     count = 0;
 
-    FILE *file = fopen("/sdcard/download/dump.dat","w");
-    if(file) {
-        size_t szWrite = fwrite("test", 1, 4, file);
-        __android_log_print(ANDROID_LOG_INFO, TAG, "fopen ok, written=%zu", szWrite);
-        fclose(file);
-        __android_log_print(ANDROID_LOG_INFO,TAG,"after fclose");
-    }else
-        __android_log_print(ANDROID_LOG_INFO,TAG,"fopen failed, error=%s",strerror(errno));
-
     size_t bytes;
     FILEINFO info;
     FILE *pFile = 0;
