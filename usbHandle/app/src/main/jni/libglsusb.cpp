@@ -7,6 +7,7 @@
 #include <android/log.h>
 #include <string.h>
 #include "fileinfo.h"
+#include <errno.h>
 
 #define TAG "glsusb"
 #define BUF_SIZE    (8192*8*4)
@@ -152,6 +153,16 @@ static void* runThread(void *arg)
     __android_log_print(ANDROID_LOG_INFO,TAG,"runThread starts(ep:0x%x)...",ep);
     memset(buf,'\0',BUF_SIZE);
     count = 0;
+
+    FILE *file = fopen("/sdcard/download/dump.dat","w");
+    if(file) {
+        size_t szWrite = fwrite("test", 1, 4, file);
+        __android_log_print(ANDROID_LOG_INFO, TAG, "fopen ok, written=%zu", szWrite);
+        fclose(file);
+        __android_log_print(ANDROID_LOG_INFO,TAG,"after fclose");
+    }else
+        __android_log_print(ANDROID_LOG_INFO,TAG,"fopen failed, error=%s",strerror(errno));
+
     while(1){
         r = libusb_bulk_transfer(devh,ep,buf,sizeof(unsigned char)*BUF_SIZE,&transferred,0);
         if(r==0){
