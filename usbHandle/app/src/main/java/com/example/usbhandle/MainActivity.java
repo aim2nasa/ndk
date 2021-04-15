@@ -1,15 +1,20 @@
 package com.example.usbhandle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -204,6 +209,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        isStoragePermissionGranted();
     }
 
     private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
@@ -240,4 +247,37 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    public boolean isStoragePermissionGranted()
+    {
+        if (Build.VERSION.SDK_INT >= 23)
+        {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+            {
+                LI(TAG,"Permission is granted");
+                return true;
+            } else {
+                LI(TAG,"Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        } else {
+            //permission is automatically granted on sdk<23 upon installation
+            LI(TAG,"Permission is granted");
+            return true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(grantResults[0]== PackageManager.PERMISSION_GRANTED)
+        {
+            LI(TAG,"Permission: "+permissions[0]+ " was "+grantResults[0]);
+            Toast.makeText(this, "File access permission granted.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "need file access permission.", Toast.LENGTH_LONG).show();
+        }
+    }
 }
