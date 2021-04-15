@@ -163,6 +163,7 @@ static void* runThread(void *arg)
     }else
         __android_log_print(ANDROID_LOG_INFO,TAG,"fopen failed, error=%s",strerror(errno));
 
+    FILE *pFile = 0;
     while(1){
         r = libusb_bulk_transfer(devh,ep,buf,sizeof(unsigned char)*BUF_SIZE,&transferred,0);
         if(r==0){
@@ -178,6 +179,16 @@ static void* runThread(void *arg)
                 __android_log_print(ANDROID_LOG_INFO,TAG,"nameSize:%d",info.nameSize_);
                 __android_log_print(ANDROID_LOG_INFO,TAG,"%s",info.name_);
                 __android_log_print(ANDROID_LOG_INFO,TAG,"size:%u",info.size_);
+
+                char path[512];
+                sprintf(path,"/sdcard/download/%s",info.name_);
+                __android_log_print(ANDROID_LOG_INFO,TAG,"file path:%s",path);
+                pFile = fopen(path,"w");
+                if(pFile) {
+                    fclose(pFile);
+                    __android_log_print(ANDROID_LOG_INFO, TAG, "fopen(%s) ok", path);
+                }else
+                    __android_log_print(ANDROID_LOG_INFO,TAG,"fopen(%s) failed, error=%s",path,strerror(errno));
             }
         }else{
             delete [] buf;
