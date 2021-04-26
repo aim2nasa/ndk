@@ -38,6 +38,10 @@ public class MainActivity extends AppCompatActivity {
         Log.i("NTC", "Java callback function: " + a);
     }
 
+    public void memberCallback(int a){
+        Log.i("NTC", "Java MemberCallback function: " + a);
+    }
+
     /**
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.

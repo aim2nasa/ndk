@@ -16,6 +16,7 @@ JavaVM * glpVM = NULL;
 int end_flag;
 jclass jObject = NULL;
 jmethodID funccb = NULL;
+jmethodID memFunccb = NULL;
 
 void Notify(int n) {
     int value = 0 ;
@@ -78,6 +79,17 @@ Java_com_example_nativethreadcallback_MainActivity_startThread(JNIEnv *env, jobj
     else {
         __android_log_print( ANDROID_LOG_INFO, "NTC", "Method connect success....\n") ;
         env->CallStaticVoidMethod( cls, funccb, 10 ) ;
+    }
+
+    memFunccb = env->GetMethodID( cls, "memberCallback", "(I)V" ) ;
+    if ( memFunccb == 0 ) {
+        __android_log_print( ANDROID_LOG_INFO, "NTC", "Can't find the Member function." ) ;
+        env->DeleteGlobalRef( jObject ) ;
+    }
+    else {
+        __android_log_print( ANDROID_LOG_INFO, "NTC", "Member Method connect success....\n") ;
+        env->CallVoidMethod( thiz , memFunccb, 10 ) ;
+        __android_log_print( ANDROID_LOG_INFO, "NTC", "After Member Method\n") ;
     }
 
     pthread_t p_thread;
