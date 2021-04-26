@@ -3,6 +3,7 @@ package com.example.nativethreadcallback;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -12,6 +13,9 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("native-lib");
     }
 
+    public native int startThread();
+    public native int endThread();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,6 +24,18 @@ public class MainActivity extends AppCompatActivity {
         // Example of a call to a native method
         TextView tv = findViewById(R.id.sample_text);
         tv.setText(stringFromJNI());
+
+        Log.i("NTC","Java onCreate(), startThread : "+ startThread());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.i("NTC","Java onStop(), endThread : "+ endThread());
+    }
+
+    public static void callback(int a){
+        Log.i("NTC", "Java callback function: " + a);
     }
 
     /**
