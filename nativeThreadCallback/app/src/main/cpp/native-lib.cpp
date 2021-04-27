@@ -76,7 +76,6 @@ Java_com_example_nativethreadcallback_MainActivity_startThread(JNIEnv *env, jobj
     gStaticCB = env->GetStaticMethodID(cls, "callback", "(I)V" ) ;
     if (gStaticCB == 0 ) {
         __android_log_print( ANDROID_LOG_INFO, "NTC", "Can't find the function." ) ;
-        env->DeleteGlobalRef(gClass ) ;
     }
     else {
         __android_log_print( ANDROID_LOG_INFO, "NTC", "Method connect success....\n") ;
@@ -86,7 +85,6 @@ Java_com_example_nativethreadcallback_MainActivity_startThread(JNIEnv *env, jobj
     gMemberCB = env->GetMethodID(cls, "memberCallback", "(I)V" ) ;
     if (gMemberCB == 0 ) {
         __android_log_print( ANDROID_LOG_INFO, "NTC", "Can't find the Member function." ) ;
-        env->DeleteGlobalRef(gClass ) ;
     }
     else {
         __android_log_print( ANDROID_LOG_INFO, "NTC", "Member Method connect success....\n") ;
@@ -109,6 +107,8 @@ JNIEXPORT jint JNICALL
 Java_com_example_nativethreadcallback_MainActivity_endThread(JNIEnv *env, jobject thiz) {
     __android_log_print( ANDROID_LOG_INFO, "NTC", "Call end thread" ) ;
     gEndFlag = 0 ;
+    env->DeleteGlobalRef(gClass ) ;
+    env->DeleteGlobalRef(gObject) ;
     return 0 ;
 }
 
