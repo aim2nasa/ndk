@@ -12,35 +12,35 @@ Java_com_example_nativethreadcallback_MainActivity_stringFromJNI(
     return env->NewStringUTF(hello.c_str());
 }
 
-JavaVM * glpVM = NULL;
-int end_flag;
-jclass jObject = NULL;
-jmethodID funccb = NULL;
-jmethodID memFunccb = NULL;
+JavaVM * gJavaVM = NULL;
+int gEndFlag;
+jclass gClass = NULL;
+jmethodID gStaticCB = NULL;
+jmethodID gMemberCB = NULL;
 
 void Notify(int n) {
     int value = 0 ;
     value = n ;
-    if ( !glpVM ) {
-        __android_log_print( ANDROID_LOG_INFO, "NTC", "error (!glpVM)" ) ;
+    if ( !gJavaVM ) {
+        __android_log_print( ANDROID_LOG_INFO, "NTC", "error (!gJavaVM)" ) ;
         return ;
     }
 
-    if ( !funccb ) {
-        __android_log_print( ANDROID_LOG_INFO, "NTC", "error (!funccb)" ) ;
+    if ( !gStaticCB ) {
+        __android_log_print( ANDROID_LOG_INFO, "NTC", "error (!gStaticCB)" ) ;
         return ;
     }
 
     JNIEnv* env = NULL ;
-    glpVM->AttachCurrentThread(  &env, NULL ) ;
-    if ( env == NULL || jObject == NULL ) {
-        glpVM->DetachCurrentThread() ;
+    gJavaVM->AttachCurrentThread(&env, NULL ) ;
+    if ( env == NULL || gClass == NULL ) {
+        gJavaVM->DetachCurrentThread() ;
         __android_log_print( ANDROID_LOG_INFO, "NTC", "error (env == NULL || AVM_JM.JObject == NULL)" ) ;
         return ;
     }
 
-    env->CallStaticVoidMethod(  jObject, funccb, value ) ;
-    glpVM->DetachCurrentThread( ) ;
+    env->CallStaticVoidMethod(gClass, gStaticCB, value ) ;
+    gJavaVM->DetachCurrentThread( ) ;
 }
 
 void *t_function(void *data)
@@ -49,7 +49,7 @@ void *t_function(void *data)
     int i=0;
     id = *((int *)data);
 
-    while(end_flag)
+    while(gEndFlag)
     {
         Notify(i);
         i++;
@@ -60,7 +60,7 @@ void *t_function(void *data)
 extern "C"
 JNIEXPORT jint JNICALL
 Java_com_example_nativethreadcallback_MainActivity_startThread(JNIEnv *env, jobject thiz) {
-    end_flag = 1;
+    gEndFlag = 1;
     int b = 2 ;
 
     __android_log_print( ANDROID_LOG_INFO, "NTC", "Call start thread" ) ;
@@ -70,25 +70,25 @@ Java_com_example_nativethreadcallback_MainActivity_startThread(JNIEnv *env, jobj
         __android_log_print( ANDROID_LOG_INFO, "NTC", "Can't find the class.") ;
     }
 
-    jObject = (jclass)env->NewGlobalRef( cls ) ;
-    funccb = env->GetStaticMethodID( cls, "callback", "(I)V" ) ;
-    if ( funccb == 0 ) {
+    gClass = (jclass)env->NewGlobalRef(cls ) ;
+    gStaticCB = env->GetStaticMethodID(cls, "callback", "(I)V" ) ;
+    if (gStaticCB == 0 ) {
         __android_log_print( ANDROID_LOG_INFO, "NTC", "Can't find the function." ) ;
-        env->DeleteGlobalRef( jObject ) ;
+        env->DeleteGlobalRef(gClass ) ;
     }
     else {
         __android_log_print( ANDROID_LOG_INFO, "NTC", "Method connect success....\n") ;
-        env->CallStaticVoidMethod( cls, funccb, 10 ) ;
+        env->CallStaticVoidMethod(cls, gStaticCB, 10 ) ;
     }
 
-    memFunccb = env->GetMethodID( cls, "memberCallback", "(I)V" ) ;
-    if ( memFunccb == 0 ) {
+    gMemberCB = env->GetMethodID(cls, "memberCallback", "(I)V" ) ;
+    if (gMemberCB == 0 ) {
         __android_log_print( ANDROID_LOG_INFO, "NTC", "Can't find the Member function." ) ;
-        env->DeleteGlobalRef( jObject ) ;
+        env->DeleteGlobalRef(gClass ) ;
     }
     else {
         __android_log_print( ANDROID_LOG_INFO, "NTC", "Member Method connect success....\n") ;
-        env->CallVoidMethod( thiz , memFunccb, 10 ) ;
+        env->CallVoidMethod(thiz , gMemberCB, 10 ) ;
         __android_log_print( ANDROID_LOG_INFO, "NTC", "After Member Method\n") ;
     }
 
@@ -105,7 +105,7 @@ extern "C"
 JNIEXPORT jint JNICALL
 Java_com_example_nativethreadcallback_MainActivity_endThread(JNIEnv *env, jobject thiz) {
     __android_log_print( ANDROID_LOG_INFO, "NTC", "Call end thread" ) ;
-    end_flag = 0 ;
+    gEndFlag = 0 ;
     return 0 ;
 }
 
@@ -136,7 +136,7 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
         goto error ;
     }
     result = JNI_VERSION_1_4 ;
-    glpVM = vm ;
+    gJavaVM = vm ;
     error:
     return result ;
 }
