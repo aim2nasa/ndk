@@ -17,6 +17,7 @@ int gEndFlag;
 jclass gClass = NULL;
 jmethodID gStaticCB = NULL;
 jmethodID gMemberCB = NULL;
+jobject gObject = NULL;
 
 void Notify(int n) {
     int value = 0 ;
@@ -40,6 +41,7 @@ void Notify(int n) {
     }
 
     env->CallStaticVoidMethod(gClass, gStaticCB, value ) ;
+    env->CallVoidMethod(gObject , gMemberCB, value ) ;
     gJavaVM->DetachCurrentThread( ) ;
 }
 
@@ -90,6 +92,7 @@ Java_com_example_nativethreadcallback_MainActivity_startThread(JNIEnv *env, jobj
         __android_log_print( ANDROID_LOG_INFO, "NTC", "Member Method connect success....\n") ;
         env->CallVoidMethod(thiz , gMemberCB, 20 ) ;
         __android_log_print( ANDROID_LOG_INFO, "NTC", "After Member Method\n") ;
+        gObject = env->NewGlobalRef(thiz);
     }
 
     pthread_t p_thread;
