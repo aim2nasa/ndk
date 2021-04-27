@@ -40,8 +40,26 @@ void Notify(int n) {
         return ;
     }
 
+    __android_log_print( ANDROID_LOG_INFO, "NTC", "call static method..." ) ;
     env->CallStaticVoidMethod(gClass, gStaticCB, value ) ;
-    env->CallVoidMethod(gObject , gMemberCB, value ) ;
+
+
+    jclass clz = env->GetObjectClass(gObject);
+    if(clz==NULL) {
+        __android_log_print( ANDROID_LOG_ERROR, "NTC", "can't find class" ) ;
+        return;
+    }
+
+    gMemberCB = env->GetMethodID(clz, "onUpdate", "(I)V" ) ;
+    if (gMemberCB == 0 ) {
+        __android_log_print( ANDROID_LOG_INFO, "NTC", "Can't find the Member function." ) ;
+    } else {
+        __android_log_print( ANDROID_LOG_INFO, "NTC", "Member Method connect success....\n") ;
+    }
+
+    __android_log_print( ANDROID_LOG_INFO, "NTC", "call member method..." ) ;
+    env->CallVoidMethod(gObject, gMemberCB, value ) ;
+    __android_log_print( ANDROID_LOG_INFO, "NTC", "call member method done" ) ;
     gJavaVM->DetachCurrentThread( ) ;
 }
 
@@ -61,7 +79,7 @@ void *t_function(void *data)
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_com_example_nativethreadcallback_MainActivity_startThread(JNIEnv *env, jobject thiz) {
+Java_com_example_nativethreadcallback_MainActivity_startThread(JNIEnv *env, jobject thiz, jobject arg) {
     gEndFlag = 1;
     int b = 2 ;
 
@@ -82,16 +100,7 @@ Java_com_example_nativethreadcallback_MainActivity_startThread(JNIEnv *env, jobj
         env->CallStaticVoidMethod(cls, gStaticCB, 10 ) ;
     }
 
-    gMemberCB = env->GetMethodID(cls, "memberCallback", "(I)V" ) ;
-    if (gMemberCB == 0 ) {
-        __android_log_print( ANDROID_LOG_INFO, "NTC", "Can't find the Member function." ) ;
-    }
-    else {
-        __android_log_print( ANDROID_LOG_INFO, "NTC", "Member Method connect success....\n") ;
-        env->CallVoidMethod(thiz , gMemberCB, 20 ) ;
-        __android_log_print( ANDROID_LOG_INFO, "NTC", "After Member Method\n") ;
-        gObject = env->NewGlobalRef(thiz);
-    }
+    gObject = env->NewGlobalRef(arg);
 
     pthread_t p_thread;
     int thr_id = pthread_create(&p_thread, NULL, t_function, (void *) &b);
@@ -132,12 +141,13 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
         __android_log_print( ANDROID_LOG_INFO, "NTC", "Native registration unable to find class(AVMJni)" ) ;
         goto error ;
     }
-
+/*
     if ( env->RegisterNatives(  cls, methods, sizeof( methods ) /
                                               sizeof ( methods[0] ) ) < 0 ) {
         __android_log_print(ANDROID_LOG_INFO, "NTC", "Registernatives failed !!!\n" ) ;
         goto error ;
     }
+*/
     result = JNI_VERSION_1_4 ;
     gJavaVM = vm ;
     error:
