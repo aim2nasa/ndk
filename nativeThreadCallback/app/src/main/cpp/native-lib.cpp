@@ -88,7 +88,7 @@ Java_com_example_nativethreadcallback_MainActivity_startThread(JNIEnv *env, jobj
     }
     else {
         __android_log_print( ANDROID_LOG_INFO, "NTC", "Member Method connect success....\n") ;
-        env->CallVoidMethod(thiz , gMemberCB, 10 ) ;
+        env->CallVoidMethod(thiz , gMemberCB, 20 ) ;
         __android_log_print( ANDROID_LOG_INFO, "NTC", "After Member Method\n") ;
     }
 
