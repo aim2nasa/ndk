@@ -9,7 +9,7 @@ int main(int argc,char* argv[])
 
     cout<<"sizeof(wchar_t)="<<sizeof(wchar_t)<<endl;
 
-    wchar_t *pstr = L"더 킹.mp4";
+    const wchar_t *pstr = L"더 킹.mp4";
     wcout<<"pstr="<<pstr<<endl;
 
     cout<<hex;
