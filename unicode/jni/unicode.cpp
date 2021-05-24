@@ -7,6 +7,13 @@ wchar_t toLinUnicode(unsigned char uc1,unsigned char uc2)
     return (uc2<<8)|uc1;
 }
 
+std::wstring buf2wstr(unsigned char *buf,unsigned int bufSize)
+{
+    std::wstring s;
+    for(int i=0;i<bufSize;i+=2) s.append(1,toLinUnicode(buf[i],buf[i+1]));
+    return s;
+}
+
 int main(int argc,char* argv[])
 {
     setlocale(LC_ALL,"");
@@ -58,5 +65,8 @@ int main(int argc,char* argv[])
     for(int i=0;i<sizeof(netBuf);i+=2){
         wcout<<"wchar"<<i/2<<"="<<toLinUnicode(netBuf[i],netBuf[i+1])<<endl;
     }
+
+    //Using buf2wstr function
+    wcout<<"obtained string from buffer="<<buf2wstr(netBuf,sizeof(netBuf))<<endl;
     return 0;
 }
