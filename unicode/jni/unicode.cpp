@@ -31,5 +31,7 @@ int main(int argc,char* argv[])
     wcout<<"ws[4]="<<ws[4]<<endl;
     wcout<<"ws[5]="<<ws[5]<<endl;
     wcout<<"ws[6]="<<ws[6]<<endl;
+
+    wcout<<"sizeof(ws[0])="<<sizeof(ws[0])<<endl;
     return 0;
 }
