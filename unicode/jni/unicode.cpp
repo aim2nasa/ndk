@@ -21,5 +21,15 @@ int main(int argc,char* argv[])
     cout<<"pstr[5] 0x"<<pstr[5]<<endl;
     cout<<"pstr[6] 0x"<<pstr[6]<<endl;
     cout<<"pstr[7] 0x"<<pstr[7]<<endl;
+
+    wstring ws((wchar_t*)pstr);
+    wcout<<"ws="<<ws<<endl;
+    wcout<<"ws[0]="<<ws[0]<<endl;
+    wcout<<"ws[1]="<<ws[1]<<endl;
+    wcout<<"ws[2]="<<ws[2]<<endl;
+    wcout<<"ws[3]="<<ws[3]<<endl;
+    wcout<<"ws[4]="<<ws[4]<<endl;
+    wcout<<"ws[5]="<<ws[5]<<endl;
+    wcout<<"ws[6]="<<ws[6]<<endl;
     return 0;
 }
