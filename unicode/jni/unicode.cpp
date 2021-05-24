@@ -2,6 +2,11 @@
 
 using namespace std;
 
+wchar_t toLinUnicode(unsigned char uc1,unsigned char uc2)
+{
+	return (uc2<<8)|uc1; 
+}
+
 int main(int argc,char* argv[])
 {
     setlocale(LC_ALL,"");
@@ -41,5 +46,12 @@ int main(int argc,char* argv[])
 	wcout<<hex<<"0x"<<(int)ws[0]<<endl;
 
     unsigned char netBuf[]={ 0x54,0xb3,0x20,0x00,0xb9,0xd0,0x2e,0x00,0x6d,0x00,0x70,0x00,0x34,0x00 };	//더 킹.mp4
+	wcout<<"wchar0="<<toLinUnicode(netBuf[0],netBuf[1])<<endl;
+	wcout<<"wchar1="<<toLinUnicode(netBuf[2],netBuf[3])<<endl;
+	wcout<<"wchar2="<<toLinUnicode(netBuf[4],netBuf[5])<<endl;
+	wcout<<"wchar3="<<toLinUnicode(netBuf[6],netBuf[7])<<endl;
+	wcout<<"wchar4="<<toLinUnicode(netBuf[8],netBuf[9])<<endl;
+	wcout<<"wchar5="<<toLinUnicode(netBuf[10],netBuf[11])<<endl;
+	wcout<<"wchar6="<<toLinUnicode(netBuf[12],netBuf[13])<<endl;
     return 0;
 }
