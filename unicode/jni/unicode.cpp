@@ -53,5 +53,10 @@ int main(int argc,char* argv[])
     wcout<<"wchar4="<<toLinUnicode(netBuf[8],netBuf[9])<<endl;  //m
     wcout<<"wchar5="<<toLinUnicode(netBuf[10],netBuf[11])<<endl;//p
     wcout<<"wchar6="<<toLinUnicode(netBuf[12],netBuf[13])<<endl;//4
+
+    //Simplify using loop
+    for(int i=0;i<sizeof(netBuf);i+=2){
+        wcout<<"wchar"<<i/2<<"="<<toLinUnicode(netBuf[i],netBuf[i+1])<<endl;
+    }
     return 0;
 }
