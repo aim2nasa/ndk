@@ -7,6 +7,8 @@ int main(int argc,char* argv[])
     setlocale(LC_ALL,"");
     wprintf(L"유니코드 테스트\n");
 
+    cout<<"sizeof(wchar_t)="<<sizeof(wchar_t)<<endl;
+
     wchar_t *pstr = L"더 킹.mp4";
     wcout<<"pstr="<<pstr<<endl;
 
