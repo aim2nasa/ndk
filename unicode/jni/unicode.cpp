@@ -1,4 +1,5 @@
 #include <iostream>
+#include <assert.h>
 
 using namespace std;
 
@@ -12,6 +13,16 @@ std::wstring buf2wstr(unsigned char *buf,unsigned int bufSize)
     std::wstring s;
     for(int i=0;i<bufSize;i+=2) s.append(1,toLinUnicode(buf[i],buf[i+1]));
     return s;
+}
+
+unsigned int wstr2buf(std::wstring s,unsigned char *buf,unsigned int bufSize)
+{
+    assert(2*s.length()<=bufSize);
+    for(size_t i=0;i<s.length();i++) {
+        buf[2*i] = s[i]&0xff;
+        buf[2*i+1] = (s[i]&0xff00)>>8;
+    }
+    return 2*s.length();
 }
 
 int main(int argc,char* argv[])
@@ -68,5 +79,13 @@ int main(int argc,char* argv[])
 
     //Using buf2wstr function
     wcout<<"obtained string from buffer="<<buf2wstr(netBuf,sizeof(netBuf))<<endl;
+
+    //generate stream from unicode string by using wstr2buf function
+    unsigned char *genBuf = new unsigned char[128];
+    unsigned int len = wstr2buf(ws,genBuf,128);
+    wcout<<dec<<"genBuf actual length="<<len<<endl;
+    for(unsigned int i=0;i<len;i++) wcout<<hex<<"genBuf["<<i<<"]=0x"<<genBuf[i]<<endl;
+    delete [] genBuf;
+
     return 0;
 }
